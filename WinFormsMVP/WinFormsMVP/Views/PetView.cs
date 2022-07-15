@@ -15,24 +15,71 @@ namespace WinFormsMVP.Views
         //Fields
         private string message;
         private bool isSuccessful;
-        private bool isEdit;                
+        private bool isEdit;
 
         //Constructor
         public PetView()
         {
             InitializeComponent();
             AssociateAndRaiseViewEvents();
-            tabControl1.TabPages.Remove(tabPagePetList);
+            tabControl1.TabPages.Remove(tabPagePetDetail);
+            btnClose.Click += delegate { this.Close(); };
         }
 
         private void AssociateAndRaiseViewEvents()
         {
+            //Search
             btnSearch.Click += delegate { SearchEvent?.Invoke(this, EventArgs.Empty); };
-            txtSearchPet.KeyDown += (s, e) =>
+            txtSearch.KeyDown += (s, e) =>
+              {
+                  if (e.KeyCode == Keys.Enter)
+                      SearchEvent?.Invoke(this, EventArgs.Empty);
+              };
+            //Add new
+            btnAddNew.Click += delegate
             {
-                if (e.KeyCode == Keys.Enter) 
-                    SearchEvent?.Invoke(this, EventArgs.Empty);
-            };        
+                AddNewEvent?.Invoke(this, EventArgs.Empty);
+                tabControl1.TabPages.Remove(tabPagePetList);
+                tabControl1.TabPages.Add(tabPagePetDetail);
+                tabPagePetDetail.Text = "Add new pet";
+            };
+            //Edit
+            btnEdit.Click += delegate
+            {
+                EditEvent?.Invoke(this, EventArgs.Empty);
+                tabControl1.TabPages.Remove(tabPagePetList);
+                tabControl1.TabPages.Add(tabPagePetDetail);
+                tabPagePetDetail.Text = "Edit pet";
+            };
+            //Save changes
+            btnSave.Click += delegate
+            {
+                SaveEvent?.Invoke(this, EventArgs.Empty);
+                if (isSuccessful)
+                {
+                    tabControl1.TabPages.Remove(tabPagePetDetail);
+                    tabControl1.TabPages.Add(tabPagePetList);
+                }
+                MessageBox.Show(Message);
+            };
+            //Cancel
+            btnCancel.Click += delegate
+            {
+                CancelEvent?.Invoke(this, EventArgs.Empty);
+                tabControl1.TabPages.Remove(tabPagePetDetail);
+                tabControl1.TabPages.Add(tabPagePetList);
+            };
+            //Delete
+            btnDelete.Click += delegate
+            {               
+                var result = MessageBox.Show("Are you sure you want to delete the selected pet?", "Warning",
+                      MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    DeleteEvent?.Invoke(this, EventArgs.Empty);
+                    MessageBox.Show(Message);
+                }
+            };
         }
 
         //Properties
@@ -41,38 +88,45 @@ namespace WinFormsMVP.Views
             get { return txtPetId.Text; }
             set { txtPetId.Text = value; }
         }
+
         public string PetName
         {
             get { return txtPetName.Text; }
             set { txtPetName.Text = value; }
         }
+
         public string PetType
         {
             get { return txtPetType.Text; }
             set { txtPetType.Text = value; }
         }
-        public string PetColours
+
+        public string PetColour
         {
             get { return txtPetColour.Text; }
             set { txtPetColour.Text = value; }
         }
-        public string SearchValue 
+
+        public string SearchValue
         {
-            get { return txtSearchPet.Text; }
-            set { txtSearchPet.Text = value;   }
+            get { return txtSearch.Text; }
+            set { txtSearch.Text = value; }
         }
+
         public bool IsEdit
         {
             get { return isEdit; }
             set { isEdit = value; }
         }
-            
-        public bool IsSuccessFull 
-        { 
-            get { return isSuccessful;  }
+
+        public bool IsSuccessful
+        {
+            get { return isSuccessful; }
             set { isSuccessful = value; }
         }
-        public string Message {
+
+        public string Message
+        {
             get { return message; }
             set { message = value; }
         }
@@ -85,15 +139,15 @@ namespace WinFormsMVP.Views
         public event EventHandler SaveEvent;
         public event EventHandler CancelEvent;
 
-        //Method
-        public void SetPetListBindingSource(BindingSource petlist)
+        //Methods
+        public void SetPetListBindingSource(BindingSource petList)
         {
-            dataGridViewPet.DataSource = petlist;
+            dataGridView.DataSource = petList;
         }
 
-        //Singleton patttern (Open a single form instance)
+        //Singleton pattern (Open a single form instance)
         private static PetView instance;
-        public static PetView GetInstance(Form parentContainer)
+        public static PetView GetInstace(Form parentContainer)
         {
             if (instance == null || instance.IsDisposed)
             {
@@ -110,6 +164,5 @@ namespace WinFormsMVP.Views
             }
             return instance;
         }
-        
     }
 }

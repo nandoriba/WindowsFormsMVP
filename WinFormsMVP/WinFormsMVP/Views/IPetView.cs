@@ -1,16 +1,23 @@
-﻿namespace WinFormsMVP.Views
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WinFormsMVP.Views
 {
     public interface IPetView
     {
         //Properties - Fields
-        string PetId { get; set;  }
+        string PetId { get; set; }
         string PetName { get; set; }
         string PetType { get; set; }
-        string PetColours { get; set; }
+        string PetColour { get; set; }
 
         string SearchValue { get; set; }
         bool IsEdit { get; set; }
-        bool IsSuccessFull { get; set; }
+        bool IsSuccessful { get; set; }
         string Message { get; set; }
 
         //Events
@@ -22,8 +29,8 @@
         event EventHandler CancelEvent;
 
         //Methods
-        void SetPetListBindingSource(BindingSource petlist);
-        void Show(); //Optional
-        
+        void SetPetListBindingSource(BindingSource petList);
+        void Show();//Optional
+
     }
 }

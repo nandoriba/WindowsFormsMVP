@@ -6,7 +6,7 @@
         void Edit(PetModel petModel);
         void Delete(int id);
         IEnumerable<PetModel> GetAll();
-        IEnumerable<PetModel> GetByValue(string value); //Searcs
+        IEnumerable<PetModel> GetByValue(string value);//Searchs
 
     }
 }
